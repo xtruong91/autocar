@@ -37,6 +37,7 @@ public:
     void MoveLeft(Speed speed);
     void MoveRight();
     void MoveRight(Speed speed);
+    void Stop();
 private:
     static int ConvertSpeed2PWM(Speed speed); 
     static const int threshold;

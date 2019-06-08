@@ -16,6 +16,8 @@
 #include "JoyStick.h"
 #include "HBridge.h"
 
+#define PWM_WIDTH       255
+
 typedef enum 
 {
     Stop,
@@ -29,11 +31,23 @@ class Controller
 {
 public:
     void Init();
-    void DetectNavigation(int pwmx, int pwmy);
+    void Run();
+private:    
+    Moving DetectNavigation(int pwmx, int pwmy, int threshold);
+    // Range PWM 255
+    /*
+        threshold = 128 in range 255
+    */
+    Speed DetectSpeed(int pwm, int threshold);
+    void ControlHBridge(Moving way, Speed speed);
+    void ControlHBridge(Moving way);
 private:
     JoyStick joyStick;
     HBridge hBridge;
-    const int threadhold = 128;    
+    JStickData jsData;
+    Speed speed;
+    Moving way;
+    static const int thresholdPWM = 128;    
     const int offset = 10;
 };
 

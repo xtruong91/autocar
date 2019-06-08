@@ -97,3 +97,11 @@ int HBridge::ConvertSpeed2PWM(Speed speed)
         return threshold;
     }    
 }
+
+void HBridge::Stop()
+{
+    digitalWrite(WHEELLEFTPIN1, LOW);
+    digitalWrite(WHEELLEFTPIN2, LOW);
+    digitalWrite(WHEELRIGHTPIN1, LOW);
+    digitalWrite(WHEELRIGHTPIN2, LOW);
+}

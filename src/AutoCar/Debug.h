@@ -1,5 +1,5 @@
 /*
- * File: ES8266.h
+ * File: Debug.h
  * File Created: Saturday, 8th June 2019
  * Author: truongtx (truongtx91@gmail.com)
  * -----
@@ -9,20 +9,21 @@
  * -----
  * Copyright TruongTX
  */
-#ifndef ESP8266_H
-#define ESP8266_H
+#ifndef DEBUG_H
+#define DEBUG_H
 
+#include "Arduino.h"
 #include "UART.h"
 
-class ESP8266
+
+class Debug 
 {
 public:
-    ESP8266(UART* uart);
+    Debug(UART* uart);
     void Init();
-    void Send(const char* buffer, int length);
-    void SubscribeRcv(char *buffer, int length);
+    int Printf(const char* format, ...);
 private:
-    void serialEvent();
+    UART* puart;    
 };
 
 #endif
