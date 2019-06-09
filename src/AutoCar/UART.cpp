@@ -3,7 +3,7 @@
  * File Created: Saturday, 8th June 2019
  * Author: truongtx (truongtx91@gmail.com)
  * -----
- * Description: 
+ * Description: used vector at: https://github.com/mike-matera/ArduinoSTL
  * Version: 0.1
  * Tool: CMake
  * -----
@@ -13,6 +13,17 @@
 #include "Arduino.h"
 
 CallBackRX UART::cbReceiveData;
+
+UART *UART::inst = '\0';
+
+UART *UART::Instance()
+{
+    if(inst == '\0')
+    {
+        inst = new UART();
+    }
+    return inst;
+}
 
 void UART::Init()
 {
@@ -29,21 +40,35 @@ void UART::Attach(CallBackRX subscribeRX)
     cbReceiveData = subscribeRX;
 }
 
+int index = 0;
+char buffer[BUFF_LENGTH];
+
 void serialEvent() {
-  while (Serial.available()) {
-    // get the new byte:
-    char inChar = (char)Serial.read();
-    if(UART::cbReceiveData != '\0')
+  while (Serial.available()) 
+  {
+    // get the new byte
+    char rawChar = (char) Serial.read();
+    buffer[index++] = rawChar;
+    if(rawChar == '\n')
     {
-        UART::cbReceiveData(&inChar, 1);
-    }    
-    // add it to the inputString:
-    //Debug::inputString += inChar;
-    // if the incoming character is a newline, set a flag so the main loop can
-    // do something about it:
-    if (inChar == '\n') {
-        break;
-      //Debug::stringComplete = true;
-    }   
+        memset(buffer + index, '\0', BUFF_LENGTH - index);
+        UART::Instance()->NotifyOb(buffer,index-1);
+        index = 0;
+    }
   }
+
+
+}
+
+void UART::RegisterOb(IObserverRxData* observer)
+{
+    observers.push_back(observer);
+}
+void UART::NotifyOb(char *data, int length)
+{
+    // publisher broadcasts
+    for(int i = 0; i < observers.size(); i++)
+    {
+        observers[i]->Update(data, length);
+    }
 }
