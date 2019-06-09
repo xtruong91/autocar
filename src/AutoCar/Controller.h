@@ -41,6 +41,8 @@ private:
     Speed DetectSpeed(int pwm, int threshold);
     void ControlHBridge(Moving way, Speed speed);
     void ControlHBridge(Moving way);
+
+    double computePID(double input);    
 private:
     JoyStick joyStick;
     HBridge hBridge;
@@ -49,6 +51,17 @@ private:
     Moving way;
     static const int thresholdPWM = 128;    
     const int offset = 10;
+    
+    static const double kp = 2;
+    static const double ki = 5;
+    static const double kd = 1;
+
+    unsigned long currentTime, previousTime;
+    double elapsedTime;
+    double error;
+    double lastError;
+    double input, output, setPoint = 0;
+    double cumError, rateError;
 };
 
 #endif

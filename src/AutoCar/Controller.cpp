@@ -122,3 +122,20 @@ void Controller::Run()
     // controll;
     ControlHBridge(way);    
 }
+
+double Controller::computePID(double input)
+{
+    currentTime = millis();                //get current time
+    elapsedTime = (double)(currentTime - previousTime);        //compute time elapsed from previous computation
+    
+    error = setPoint - input;                                // determine error
+    cumError += error * elapsedTime;                // compute integral
+    rateError = (error - lastError)/elapsedTime;   // compute derivative
+
+    double out = kp*error + ki*cumError + kd*rateError;                //PID output               
+
+    lastError = error;                                //remember current error
+    previousTime = currentTime;                        //remember current time
+
+    return out; 
+}
