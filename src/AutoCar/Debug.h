@@ -13,17 +13,13 @@
 #define DEBUG_H
 
 #include "Arduino.h"
-#include "UART.h"
 
 
 class Debug 
 {
 public:
-    Debug(UART* uart);
     void Init();
-    int Printf(const char* format, ...);
-private:
-    UART* puart;    
+    int Printf(const char* format, ...);  
 };
 
 #endif

@@ -15,7 +15,7 @@
 #include <SPI.h>
 #include <RF24.h>
 
-#define CSPIN       9
+#define CSPIN           9
 #define CSNPIN         10
 
 RF24 radio(CSPIN, CSNPIN); // CE, CSN

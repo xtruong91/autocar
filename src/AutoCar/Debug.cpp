@@ -12,14 +12,10 @@
 
 #include "Debug.h"
 
-Debug::Debug(UART *uart)
-{
-    puart = uart;
-}
 
 void Debug::Init()
 {
-    puart->Init();
+    Serial.begin(9600);
     Serial.println("-------------------------");
     Serial.println("Debug is loading....");
 }
