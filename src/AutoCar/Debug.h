@@ -9,8 +9,8 @@
  * -----
  * Copyright TruongTX
  */
-#ifndef DEBUG_H
-#define DEBUG_H
+#ifndef _DEBUG_H_
+#define _DEBUG_H_
 
 #include "Arduino.h"
 
@@ -18,8 +18,8 @@
 class Debug 
 {
 public:
-    void Init();
-    int Printf(const char* format, ...);  
+    void init();
+    int printf(const char* format, ...);  
 };
 
 #endif

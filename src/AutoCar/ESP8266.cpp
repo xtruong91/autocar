@@ -16,12 +16,12 @@ ESP8266::ESP8266(UART* uartSubject)
     pSubject = uartSubject;
 }
 
-void ESP8266::Send(const char* buffer, int length)
+void ESP8266::send(const char* buffer, int length)
 {
 
 }
 
-void ESP8266::Update(char *buffer, int length)
+void ESP8266::update(char *buffer, int length)
 {
     Serial.println(buffer);
     Serial.println("Length:");

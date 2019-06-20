@@ -10,35 +10,46 @@
  * Copyright TruongTX
  */
 
-#ifndef UART_H
-#define UART_H
+#ifndef _UART_H_
+#define _UART_H_
 
-#include "IRecvUartData.h"
 #include  "Vector.h"
+#include  "IRxUartObserver.h"
+#include "RingBuffer.h"
+#include "Utils.h"
 
 #define BAURATE     9600
-#define BUFF_LENGTH 100
+#define BUFFLEN     100
 
-typedef void (*CallBackRX)(char *buffer, int length);
-
-class UART : public IRecvUartData
+struct UartConfig
 {
-public:
-    static UART *Instance();
-    void Init();
-    int Send(const char* data, int length);
-    static void Attach(CallBackRX subscribeRX);
+    int baudrate;
+    int bufferLength;
+    String portname;
+};
 
-    friend void serialEvent();
-    void RegisterOb(IObserverRxData* ob);
-    void NotifyOb(char *data, int length);
+class UART
+{
+
 public:
-    static CallBackRX cbReceiveData;
-    static bool RXComplete;  // whether the string is complete
-private:
+    static UART *instance();
+    
+    RetVal init(UartConfig &config);
+    int send(const char* data, int length);
+
+    void registerRxObs(IRxUartObserver *obs);
+    void unregisterRxObs(IRxUartObserver *obs);
+    void notify();
+    /**
+     * Push data into buffer
+     * 
+    */
+    static RingBuffer m_rbBuffer;
+private:        
     UART(){};
-    Vector<IObserverRxData*> observers;
+    Vector<IRxUartObserver*> m_pRxObservers;
     static UART *inst;
+
 };
 
 #endif

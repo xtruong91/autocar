@@ -9,32 +9,49 @@
  * -----
  * Copyright TruongTX
  */
-#ifndef RING_BUFFER_H
-#define RING_BUFFER_H
+#ifndef _RING_BUFFER_H
+#define _RING_BUFFER_H
 
-template <class T>
-class RingBuffer {
+typedef struct {
+    char * const buffer;
+    int head;
+    int tail;
+    const int maxlen;
+} RingBuffer_t;
+
+
+class RingBuffer
+{
 public:
-    explicit RingBuffer(size_t size) :
-        buf_(std::unique_ptr<T[]>(new T[size])),
-        max_size_(size)
-    { // empty }
+    RingBuffer(unsigned int bufLength);
+    ~RingBuffer();
+    /*
+    * Method: circ_buf_push
+    * Returns:
+    *  0 - Success
+    * -1 - Out of space
+    */
+    int push(char data);
 
-    void put(T item);
-    T get();
-    void reset();
-    bool empty() const;
-    bool full() const;
-    size_t capacity() const;
-    size_t size() const;
+    /*
+    * Method: circ_buf_pop // pop each byte
+    * Returns:
+    *  0 - Success
+    * -1 - Empty
+    */
+    int pop(char *data);
 
+    /*
+    * Method: circ_bbuf_free_space
+    * Returns: number of bytes available
+    */
+    int free_space();
+
+    int length();
 private:
-    std::mutex mutex_;
-    std::unique_ptr<T[]> buf_;
-    size_t head_ = 0;
-    size_t tail_ = 0;
-    const size_t max_size_;
-    bool full_ = 0;
+    unsigned int bufLength;
+    char  *buffers;
+    RingBuffer_t *m_pBuffer;     
 };
 
 #endif

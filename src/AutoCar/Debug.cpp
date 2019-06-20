@@ -13,7 +13,8 @@
 #include "Debug.h"
 
 
-void Debug::Init()
+void 
+Debug::init()
 {
     Serial.begin(9600);
     Serial.println("-------------------------");
@@ -21,7 +22,8 @@ void Debug::Init()
 }
 
 
-int Debug::Printf(const char* format, ...)
+int 
+Debug::printf(const char* format, ...)
 {
     va_list arg;
     va_start(arg, format);

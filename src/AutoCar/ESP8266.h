@@ -13,14 +13,13 @@
 #define ESP8266_H
 
 #include "UART.h"
-#include "IRecvUartData.h"
 
-class ESP8266 : public IObserverRxData
+class ESP8266
 {
 public:
     ESP8266(UART* uartSubject);
-    void Send(const char* buffer, int length);
-    void Update(char *buffer, int length);
+    void send(const char* buffer, int length);
+    void update(char *buffer, int length);
 private:
     UART *pSubject;    
 };

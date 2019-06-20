@@ -12,63 +12,73 @@
 #include "UART.h"
 #include "Arduino.h"
 
-CallBackRX UART::cbReceiveData;
 
-UART *UART::inst = '\0';
+UART*UART::inst = NULL;
 
-UART *UART::Instance()
+RingBuffer UART::m_rbBuffer(BUFFLEN);
+
+UART *UART::instance()
 {
-    if(inst == '\0')
+    if(inst == NULL)
     {
         inst = new UART();
     }
     return inst;
 }
 
-void UART::Init()
+
+
+RetVal
+UART::init(UartConfig &config)
 {
-    Serial.begin(BAURATE);
+    //TODO
+    Serial.begin(config.baudrate);
     while (!Serial);
+
+#ifdef DEBUG
+    Serial.println("Initialize UART module");
+#endif
+    return RET_SUCCESS;
 }
 
-int UART::Send(const char* data, int length)
+int 
+UART::send(const char* data, int length)
 {
-
+    return Serial.write(data, length);
 }
-void UART::Attach(CallBackRX subscribeRX)
+
+void 
+UART::registerRxObs(IRxUartObserver *obs)
 {
-    cbReceiveData = subscribeRX;
+    m_pRxObservers.push_back(obs);
 }
 
-int index = 0;
-char buffer[BUFF_LENGTH];
+void
+UART::unregisterRxObs(IRxUartObserver *obs)
+{
+    //TODO
+}
+
+void
+UART::notify()
+{
+    // publisher broadcasts
+    for(int i = 0; i < m_pRxObservers.size(); i++)
+    {
+        m_pRxObservers[i]->rcvRawData(UART::m_rbBuffer);
+    }
+}
+
 
 void serialEvent() {
   while (Serial.available()) 
   {
     // get the new byte
     char rawChar = (char) Serial.read();
-    buffer[index++] = rawChar;
+    UART::m_rbBuffer.push(rawChar);
     if(rawChar == '\n')
-    {
-        memset(buffer + index, '\0', BUFF_LENGTH - index);
-        UART::Instance()->NotifyOb(buffer,index-1);
-        index = 0;
+    { 
+        UART::instance()-> notify();
     }
   }
-
-
-}
-
-void UART::RegisterOb(IObserverRxData* observer)
-{
-    observers.push_back(observer);
-}
-void UART::NotifyOb(char *data, int length)
-{
-    // publisher broadcasts
-    for(int i = 0; i < observers.size(); i++)
-    {
-        observers[i]->Update(data, length);
-    }
 }
