@@ -14,9 +14,10 @@
 
 #include "MessageParser.h"
 #include "IMessageObserver.h"
-#include "IRxUartObserver.h"
+#include "IRxByteObserver.h"
+#include "Vector.h"
 
-class MessageHandler : public IRxUartObserver
+class MessageHandler : public IRxByteObserver
 {
 public:
     void registerObs(IMessageObserver* obs);
@@ -27,6 +28,8 @@ public:
 
 private:
     void notify(); 
+    Vector<IMessageObserver*> m_pMsgObservers;
+    Message m_message;
     //MessageParser m_msgParser;
 
 };

@@ -10,13 +10,13 @@
  * Copyright TruongTX
  */
 
-#ifndef HBRIDGE_H
-#define HBRIDGE_H
+#ifndef _HBRIDGE_H_
+#define _HBRIDGE_H
 
-#define WHEELLEFTPIN1   5
-#define WHEELLEFTPIN2   6
-#define WHEELRIGHTPIN1  10
-#define WHEELRIGHTPIN2  11
+// #define WHEELLEFTPIN1   5
+// #define WHEELLEFTPIN2   6
+// #define WHEELRIGHTPIN1  10
+// #define WHEELRIGHTPIN2  11
 
 typedef enum
 {
@@ -25,21 +25,40 @@ typedef enum
     QUICK
 }Speed;
 
+/**
+ * HBridge circuit which contain L298 IC,
+ * have four output pin
+*/
+struct HBridgeConfig
+{
+    unsigned int Pin1;
+    unsigned int Pin2;
+    unsigned int Pin3;
+    unsigned int Pin4;
+};
+
 class HBridge
 {
 public:
-    void Init();
-    void MoveUp();
-    void MoveUp(Speed level);
-    void MoveDown();
-    void MoveDown(Speed level);
-    void MoveLeft();
-    void MoveLeft(Speed speed);
-    void MoveRight();
-    void MoveRight(Speed speed);
-    void Stop();
+    void init(const HBridgeConfig& config);
+    // spin clockwise
+    void moveUp();
+    // turn clockwise along with specific level
+    void moveUp(Speed level);
+    // spin anticlockwise
+    void moveDown();
+    void moveDown(Speed level);
+
+    void moveLeft();
+    void moveLeft(Speed speed);
+
+    void moveRight();
+    void moveRight(Speed speed);
+
+    void stop();
 private:
-    static int ConvertSpeed2PWM(Speed speed); 
+    HBridgeConfig &m_config;
+    static int speed2PWM(Speed speed); 
     static const int threshold;
 };
 

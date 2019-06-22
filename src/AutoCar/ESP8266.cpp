@@ -10,21 +10,24 @@
  * Copyright TruongTX
  */
 #include "ESP8266.h"
+#include "Arduino.h"
 
-ESP8266::ESP8266(UART* uartSubject)
+int 
+ESP8266::send(const char* buffer, unsigned int length)
 {
-    pSubject = uartSubject;
+    if(buffer == NULL || length == 0)
+        return;
+    return Serial.write(buffer, length);
 }
 
-void ESP8266::send(const char* buffer, int length)
+void 
+ESP8266::rcvMessage(Message& msg)
 {
-
+    // only handle with message code is ESP8266;
 }
 
-void ESP8266::update(char *buffer, int length)
+void 
+ESP8266::onDisconnect()
 {
-    Serial.println(buffer);
-    Serial.println("Length:");
-    Serial.print(length);
-    Serial.println();
+
 }

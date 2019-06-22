@@ -14,75 +14,102 @@
 
 const int HBridge::threshold = 128;
 
-void HBridge::Init()
+void 
+HBridge::init(const HBridgeConfig &config)
 {
-    pinMode(WHEELLEFTPIN1, OUTPUT);
-    pinMode(WHEELLEFTPIN2, OUTPUT);
-    pinMode(WHEELRIGHTPIN1, OUTPUT);
-    pinMode(WHEELRIGHTPIN2, OUTPUT);
-}
-void HBridge::MoveUp()
-{
-    digitalWrite(WHEELLEFTPIN1, LOW);
-    digitalWrite(WHEELLEFTPIN2, HIGH);
-    digitalWrite(WHEELRIGHTPIN1, LOW);
-    digitalWrite(WHEELRIGHTPIN2, HIGH);
-}
-void HBridge::MoveUp(Speed speed)
-{
-    int pwm = ConvertSpeed2PWM(speed);
-    analogWrite(WHEELLEFTPIN1, 0);
-    analogWrite(WHEELLEFTPIN2, pwm);
-    analogWrite(WHEELRIGHTPIN1, 0);
-    analogWrite(WHEELRIGHTPIN2, pwm);
-}
-void HBridge::MoveDown()
-{
-    digitalWrite(WHEELLEFTPIN1, HIGH);
-    digitalWrite(WHEELLEFTPIN2, LOW);
-    digitalWrite(WHEELRIGHTPIN1, HIGH);
-    digitalWrite(WHEELRIGHTPIN2, LOW);
-}
-void HBridge::MoveDown(Speed speed)
-{
-    int pwm = ConvertSpeed2PWM(speed);
-    analogWrite(WHEELLEFTPIN1, pwm);
-    analogWrite(WHEELLEFTPIN2, 0);
-    analogWrite(WHEELRIGHTPIN1, pwm);
-    analogWrite(WHEELRIGHTPIN2, 0);
-}
-void HBridge::MoveLeft()
-{
-    digitalWrite(WHEELLEFTPIN1, LOW);
-    digitalWrite(WHEELLEFTPIN2, LOW);
-    digitalWrite(WHEELRIGHTPIN1, LOW);
-    digitalWrite(WHEELRIGHTPIN2, HIGH);
-}
-void HBridge::MoveLeft(Speed speed)
-{
-    int pwm = ConvertSpeed2PWM(speed);
-    analogWrite(WHEELLEFTPIN1, pwm);
-    analogWrite(WHEELLEFTPIN2, 0);
-    analogWrite(WHEELRIGHTPIN1, pwm);
-    analogWrite(WHEELRIGHTPIN2, 0);
-}
-void HBridge::MoveRight()
-{
-    digitalWrite(WHEELLEFTPIN1, LOW);
-    digitalWrite(WHEELLEFTPIN2, LOW);
-    digitalWrite(WHEELRIGHTPIN1, LOW);
-    digitalWrite(WHEELRIGHTPIN2, HIGH);
-}
-void HBridge::MoveRight(Speed speed)
-{
-    int pwm = ConvertSpeed2PWM(speed);
-    analogWrite(WHEELLEFTPIN1, 0);
-    analogWrite(WHEELLEFTPIN2, 0);
-    analogWrite(WHEELRIGHTPIN1, pwm);
-    analogWrite(WHEELRIGHTPIN2, 0);
+    m_config = config;
+    pinMode(m_config.Pin1, OUTPUT);
+    pinMode(m_config.Pin2, OUTPUT);
+
+    pinMode(m_config.Pin3, OUTPUT);
+    pinMode(m_config.Pin4, OUTPUT);
 }
 
-int HBridge::ConvertSpeed2PWM(Speed speed)
+void 
+HBridge::moveUp()
+{
+    digitalWrite(m_config.Pin1, LOW);
+    digitalWrite(m_config.Pin2, HIGH);
+
+    digitalWrite(m_config.Pin3, LOW);
+    digitalWrite(m_config.Pin4, HIGH);
+}
+
+void 
+HBridge::moveUp(Speed speed)
+{
+    int pwm = speed2PWM(speed);
+    analogWrite(m_config.Pin1, 0);
+    analogWrite(m_config.Pin2, pwm);
+
+    analogWrite(m_config.Pin3, 0);
+    analogWrite(m_config.Pin4, pwm);
+}
+
+void 
+HBridge::moveDown()
+{
+    digitalWrite(m_config.Pin1, HIGH);
+    digitalWrite(m_config.Pin2, LOW);
+
+    digitalWrite(m_config.Pin3, HIGH);
+    digitalWrite(m_config.Pin4, LOW);
+}
+
+void 
+HBridge::moveDown(Speed speed)
+{
+    int pwm = speed2PWM(speed);
+    analogWrite(m_config.Pin1, pwm);
+    analogWrite(m_config.Pin2, 0);
+
+    analogWrite(m_config.Pin3, pwm);
+    analogWrite(m_config.Pin4, 0);
+}
+
+void 
+HBridge::moveLeft()
+{
+    digitalWrite(m_config.Pin1, LOW);
+    digitalWrite(m_config.Pin2, LOW);
+
+    digitalWrite(m_config.Pin3, LOW);
+    digitalWrite(m_config.Pin4, HIGH);
+}
+
+void 
+HBridge::moveLeft(Speed speed)
+{
+    int pwm = speed2PWM(speed);
+    analogWrite(m_config.Pin1, pwm);
+    analogWrite(m_config.Pin2, 0);
+
+    analogWrite(m_config.Pin3, pwm);
+    analogWrite(m_config.Pin4, 0);
+}
+
+void 
+HBridge::moveRight()
+{
+    digitalWrite(m_config.Pin1, LOW);
+    digitalWrite(m_config.Pin2, LOW);
+    digitalWrite(m_config.Pin3, LOW);
+    digitalWrite(m_config.Pin4, HIGH);
+}
+
+void 
+HBridge::moveRight(Speed speed)
+{
+    int pwm = speed2PWM(speed);
+    analogWrite(m_config.Pin1, 0);
+    analogWrite(m_config.Pin2, 0);
+
+    analogWrite(m_config.Pin3, pwm);
+    analogWrite(m_config.Pin4, 0);
+}
+
+int 
+HBridge::speed2PWM(Speed speed)
 {
     if(speed == SLOW)
     {
@@ -98,10 +125,12 @@ int HBridge::ConvertSpeed2PWM(Speed speed)
     }    
 }
 
-void HBridge::Stop()
+void 
+HBridge::stop()
 {
-    digitalWrite(WHEELLEFTPIN1, LOW);
-    digitalWrite(WHEELLEFTPIN2, LOW);
-    digitalWrite(WHEELRIGHTPIN1, LOW);
-    digitalWrite(WHEELRIGHTPIN2, LOW);
+    digitalWrite(m_config.Pin1, LOW);
+    digitalWrite(m_config.Pin2, LOW);
+
+    digitalWrite(m_config.Pin3, LOW);
+    digitalWrite(m_config.Pin4, LOW);
 }

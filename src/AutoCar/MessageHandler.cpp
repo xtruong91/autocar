@@ -15,19 +15,20 @@
 void 
 MessageHandler::registerObs(IMessageObserver* obs)
 {
-
+    m_pMsgObservers.push_back(obs);
 }
 
 void 
 MessageHandler::unregisterObs(IMessageObserver* obs)
 {
-
+    // TODO;
 }
 
 // Monitor data from RX UART
 void 
 MessageHandler::rcvRawData(RingBuffer &buffer)
 {
+    // Parser message then notify;
     for(RingBuffer::Iterator it = buffer.begin(); it != buffer.end(); ++it)
     {
         Serial.print(*it);
@@ -46,5 +47,9 @@ MessageHandler::rcvRawData(RingBuffer &buffer)
 void
 MessageHandler::notify()
 {
-
+    // publisher broadcasts
+    for(int i = 0; i < m_pMsgObservers.size(); i++)
+    {
+        m_pMsgObservers[i]->rcvMessage(m_message);
+    }
 }

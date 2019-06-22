@@ -14,8 +14,8 @@
 
 void Controller::Init()
 {
-    joyStick.Init();
-    hBridge.Init();
+    // joyStick.Init();
+    // hBridge.Init();
 }
 Speed Controller::DetectSpeed(int pwm, int threshold)
 {
@@ -75,16 +75,16 @@ void Controller::ControlHBridge(Moving way)
     switch (way)
     {
     case Up:
-        hBridge.MoveUp();
+        hBridge.moveUp();
         break;
     case Down:
-        hBridge.MoveDown();
+        hBridge.moveDown();
         break;        
     case Left:
-        hBridge.MoveLeft();
+        hBridge.moveLeft();
         break;
     case Right:
-        hBridge.MoveLeft();
+        hBridge.moveLeft();
         break;            
     default:
         break;
@@ -95,16 +95,16 @@ void Controller::ControlHBridge(Moving way, Speed speed)
     switch (way)
     {
     case Up:
-        hBridge.MoveUp(speed);
+        hBridge.moveUp(speed);
         break;
     case Down:
-        hBridge.MoveDown(speed);
+        hBridge.moveDown(speed);
         break;        
     case Left:
-        hBridge.MoveLeft(speed);
+        hBridge.moveLeft(speed);
         break;
     case Right:
-        hBridge.MoveLeft(speed);
+        hBridge.moveLeft(speed);
         break;            
     default:
         break;
@@ -115,7 +115,7 @@ void Controller::ControlHBridge(Moving way, Speed speed)
 void Controller::Run()
 {
     // Read joystick
-    joyStick.Read(&jsData);
+    joyStick.read(&jsData);
     // calculate Navigation and speed ;
     way = DetectNavigation(jsData.axisX, jsData.axisY, thresholdPWM);
     speed = DetectSpeed(jsData.axisX, thresholdPWM);

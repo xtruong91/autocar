@@ -12,18 +12,30 @@
 
 #include "JoyStick.h"
 
-void JoyStick::Init()
+void 
+JoyStick::init(const JoyStickConfig &config)
 {
-    pinMode (VRXPIN, INPUT) ;
-    pinMode (VRYPIN, INPUT) ;
-    pinMode (SWPIN, INPUT) ;
+    m_config = config;
+    pinMode (m_config.VRxPin, INPUT) ;
+    pinMode (m_config.VRyPin, INPUT) ;
+    pinMode (m_config.SWPin, INPUT) ;
 }
 
-void JoyStick::Read(JStickData* data)
+void 
+JoyStick::read(JStickData* data)
 {
-    if(data != '\0')
+    if(data != NULL)
         return;
-    data->axisX = analogRead (VRXPIN) ; //
-    data->axisY = analogRead (VRYPIN) ;
-    data->sw = analogRead(SWPIN);     
+    data->axisX = analogRead (m_config.VRxPin) ; //
+    data->axisY = analogRead (m_config.VRxPin) ;
+    if(analogRead(m_config.SWPin) >= 1023)
+    {
+         data->sw = true;
+    }
+    else
+    {
+        data->sw = false;
+    }
+    
+       
 }

@@ -46,13 +46,13 @@ UART::send(const char* data, int length)
 }
 
 void 
-UART::registerRxObs(IRxUartObserver *obs)
+UART::registerRxObs(IRxByteObserver *obs)
 {
     m_pRxObservers.push_back(obs);
 }
 
 void
-UART::unregisterRxObs(IRxUartObserver *obs)
+UART::unregisterRxObs(IRxByteObserver *obs)
 {
     //TODO
 }

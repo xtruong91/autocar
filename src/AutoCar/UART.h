@@ -14,7 +14,7 @@
 #define _UART_H_
 
 #include  "Vector.h"
-#include  "IRxUartObserver.h"
+#include  "IRxByteObserver.h"
 #include "RingBuffer.h"
 #include "Utils.h"
 
@@ -36,8 +36,8 @@ public:
     RetVal init(UartConfig &config);
     int send(const char* data, int length);
 
-    void registerRxObs(IRxUartObserver *obs);
-    void unregisterRxObs(IRxUartObserver *obs);
+    void registerRxObs(IRxByteObserver *obs);
+    void unregisterRxObs(IRxByteObserver *obs);
     void notify();
     /**
      * Push data into buffer
@@ -46,7 +46,7 @@ public:
     static RingBuffer m_rbBuffer;
 private:        
     UART(){};
-    Vector<IRxUartObserver*> m_pRxObservers;
+    Vector<IRxByteObserver*> m_pRxObservers;
     static UART *inst;
 
 };
