@@ -177,5 +177,10 @@ RingBuffer::getAvailableSpace()
     return freeSpace - 1; // -1 to account for the always-empty slot.
 }
 
+int 
+RingBuffer::getDataSize()
+{
+    return psRingBuffer->maxlen - getAvailableSpace();
+}
 
 

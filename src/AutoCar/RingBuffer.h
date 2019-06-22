@@ -52,7 +52,7 @@ public:
     /**
      * Get current size of data in buffer (in bytes)
     */
-    unsigned int getDataSize();
+    int getDataSize();
     /*
     * Method: push one byte into buffer;
     * Returns:
@@ -95,7 +95,6 @@ public:
     */
     unsigned int getAvailableSpace();
 
-    int length();
 private:
     char  *cbuffer;
     RingBuffer_t *psRingBuffer;   

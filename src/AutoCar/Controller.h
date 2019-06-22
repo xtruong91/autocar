@@ -14,6 +14,7 @@
 #define _CONTROLLER_H_
 
 #include "ControllerConfig.h"
+#include "MessageGateway.h"
 
 //#define DEBUG
 #define PWM_WIDTH       255
@@ -57,6 +58,8 @@ private:
     JoyStick m_joyStick;
     HBridge m_hBridge;
     JStickData joyStickData;
+
+    MessageGateway* m_pGateway;
 
     Speed speed;
     Moving way;

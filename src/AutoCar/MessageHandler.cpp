@@ -12,6 +12,13 @@
 
 #include "MessageHandler.h"
 #include "Arduino.h"
+
+MessageHandler::MessageHandler()
+    : m_pMessage(NULL)
+{
+
+}
+
 void 
 MessageHandler::registerObs(IMessageObserver* obs)
 {
@@ -29,18 +36,17 @@ void
 MessageHandler::rcvRawData(RingBuffer &buffer)
 {
     // Parser message then notify;
+#ifdef DEBUG    
     for(RingBuffer::Iterator it = buffer.begin(); it != buffer.end(); ++it)
     {
         Serial.print(*it);
     }
-
-    Serial.println();
-    char rawData;
-    while(buffer.pop(&rawData) >= 0)
+#endif
+    m_pMessage = m_msgParser.parse(buffer);
+    if(m_pMessage != NULL)
     {
-        Serial.print(rawData);
+        notify();
     }
-    //Serial.print(data);
     // Parse message here!
 }
 
@@ -50,6 +56,6 @@ MessageHandler::notify()
     // publisher broadcasts
     for(int i = 0; i < m_pMsgObservers.size(); i++)
     {
-        m_pMsgObservers[i]->rcvMessage(m_message);
+        m_pMsgObservers[i]->rcvMessage(*m_pMessage);
     }
 }

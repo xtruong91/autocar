@@ -20,6 +20,7 @@
 class MessageHandler : public IRxByteObserver
 {
 public:
+    explicit MessageHandler();
     void registerObs(IMessageObserver* obs);
     void unregisterObs(IMessageObserver* obs);
 
@@ -29,8 +30,8 @@ public:
 private:
     void notify(); 
     Vector<IMessageObserver*> m_pMsgObservers;
-    Message m_message;
-    //MessageParser m_msgParser;
+    Message *m_pMessage;
+    MessageParser m_msgParser;
 
 };
 

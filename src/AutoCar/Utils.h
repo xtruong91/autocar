@@ -16,8 +16,8 @@
 
 #define NULL 0
 
-typedef int MsgId_t;
-typedef int MsgCode_t;
+typedef unsigned short MsgId_t;
+typedef unsigned short MsgCode_t;
 
 typedef enum RetVal
 {

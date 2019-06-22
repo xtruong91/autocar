@@ -35,6 +35,9 @@ Controller::init()
     thresholdPWM = (joyStickData.axisX + joyStickData.axisY) /2; 
 
     m_hBridge.init();
+
+    m_pGateway = MessageGateway::instance();
+    m_pGateway->init();
 }
 
 Speed 

@@ -30,7 +30,7 @@ public:
 
     MsgCode_t getCode() const;
     void setCode(MsgCode_t code);
-
+     
     const Payload* getPayload() const;
     /**
      * Set payload object to message.
@@ -41,7 +41,8 @@ public:
 private:
     MsgId_t id;
     MsgCode_t code;
-    Payload *payload;        
+    Payload *payload;
+    unsigned short payloadSize;        
 };
 
 
