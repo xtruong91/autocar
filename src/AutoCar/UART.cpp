@@ -15,7 +15,7 @@
 
 UART*UART::inst = NULL;
 
-RingBuffer UART::m_rbBuffer(BUFFLEN);
+RingBuffer UART::m_rbBuffer;
 
 UART *UART::instance()
 {
@@ -25,8 +25,6 @@ UART *UART::instance()
     }
     return inst;
 }
-
-
 
 RetVal
 UART::init(UartConfig &config)
@@ -74,11 +72,12 @@ void serialEvent() {
   while (Serial.available()) 
   {
     // get the new byte
-    char rawChar = (char) Serial.read();
-    UART::m_rbBuffer.push(rawChar);
+    char rawChar = (char) Serial.read();  
     if(rawChar == '\n')
     { 
         UART::instance()-> notify();
+        break;
     }
+    UART::m_rbBuffer.push(rawChar);
   }
 }

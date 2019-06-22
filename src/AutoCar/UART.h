@@ -19,7 +19,6 @@
 #include "Utils.h"
 
 #define BAURATE     9600
-#define BUFFLEN     100
 
 struct UartConfig
 {

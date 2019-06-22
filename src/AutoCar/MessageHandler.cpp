@@ -28,6 +28,12 @@ MessageHandler::unregisterObs(IMessageObserver* obs)
 void 
 MessageHandler::rcvRawData(RingBuffer &buffer)
 {
+    for(RingBuffer::Iterator it = buffer.begin(); it != buffer.end(); ++it)
+    {
+        Serial.print(*it);
+    }
+
+    Serial.println();
     char rawData;
     while(buffer.pop(&rawData) >= 0)
     {

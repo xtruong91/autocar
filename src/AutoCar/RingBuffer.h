@@ -23,35 +23,82 @@ typedef struct {
 class RingBuffer
 {
 public:
-    RingBuffer(unsigned int bufLength);
+    class Iterator
+    {
+    public:
+        char get();
+        char operator*();
+        Iterator operator++();
+        Iterator operator--();
+
+        bool operator==(const Iterator &other);
+        bool operator!=(const Iterator &other);
+    private:
+        RingBuffer *prbuffer;
+        unsigned int index;
+        Iterator(RingBuffer *rBuffer, unsigned int i = 0);
+        bool isValid() const;
+        unsigned int getIndex() const;
+
+        friend class RingBuffer;
+    };
+    static const unsigned int DEFAULT_SIZE = 1024; // set 1MB size
+    RingBuffer(unsigned int bufLength = DEFAULT_SIZE);
     ~RingBuffer();
+
+    Iterator begin();
+    Iterator end();
+
+    /**
+     * Get current size of data in buffer (in bytes)
+    */
+    unsigned int getDataSize();
     /*
-    * Method: circ_buf_push
+    * Method: push one byte into buffer;
     * Returns:
     *  0 - Success
     * -1 - Out of space
     */
     int push(char data);
 
+    /**
+     * Append data to buffer
+     * Returns:
+     * 0 - Success
+     * -1 if data length is bigger than available space in buffer
+     * -2 if data is NULL or len is zero;
+    */
+    int push(const char *data, unsigned int len);
+
     /*
-    * Method: circ_buf_pop // pop each byte
+    * Method: pop one from front size buffer;
     * Returns:
     *  0 - Success
     * -1 - Empty
     */
     int pop(char *data);
 
+    /**
+     * Get a data segment at the begin of buffer, with length, then remove that segment from buffer
+     * @param: data pointer to buffer which will receive data. The buffer must have enough size for
+     * output data. Notee: this is not null-terminated
+     * 
+     * @return: number of bytes outputed. If error occurs, -1 return;
+     * 
+     * 
+    */
+    int pop(char *data, unsigned int len);
+
     /*
-    * Method: circ_bbuf_free_space
+    * Method: get available space in buffer
     * Returns: number of bytes available
     */
-    int free_space();
+    unsigned int getAvailableSpace();
 
     int length();
 private:
-    unsigned int bufLength;
-    char  *buffers;
-    RingBuffer_t *m_pBuffer;     
+    char  *cbuffer;
+    RingBuffer_t *psRingBuffer;   
 };
 
 #endif
