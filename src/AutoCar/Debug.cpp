@@ -12,6 +12,16 @@
 
 #include "Debug.h"
 
+Debug *Debug::m_instance = NULL;
+
+Debug *Debug::instance()
+{
+    if(m_instance == NULL)
+    {
+        m_instance = new Debug();
+    }
+    return m_instance;
+}
 
 void 
 Debug::init()

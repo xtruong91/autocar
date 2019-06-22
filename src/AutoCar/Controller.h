@@ -10,12 +10,12 @@
  * Copyright TruongTX
  */
 
-#ifndef CONTROLLER_H
-#define CONTROLLER_H
+#ifndef _CONTROLLER_H_
+#define _CONTROLLER_H_
 
-#include "JoyStick.h"
-#include "HBridge.h"
+#include "ControllerConfig.h"
 
+//#define DEBUG
 #define PWM_WIDTH       255
 
 typedef enum 
@@ -30,26 +30,37 @@ typedef enum
 class Controller
 {
 public:
-    void Init();
-    void Run();
-private:    
-    Moving DetectNavigation(int pwmx, int pwmy, int threshold);
-    // Range PWM 255
-    /*
-        threshold = 128 in range 255
+    Controller(const ControllerConfig& config);
+    // Initialize all components;
+    void init();
+    void run();
+
+private:
+    /**
+     * @param1: pwmx with range 0-1023 corresponding x axis;
+     * @param2: pwmy with range 0-1023 corresponding y axis;
+     * @param3: threadhold which detect original coordination;
+     * @return: direction;
+    */    
+    Moving determineDirect(int pwmx, int pwmy, int threshold = 512);
+    /**
+     * @param: pwm value range 0 - 255, divide into three sub-range
+     * @return: low, medium, quick level
     */
-    Speed DetectSpeed(int pwm, int threshold);
-    void ControlHBridge(Moving way, Speed speed);
-    void ControlHBridge(Moving way);
+    Speed convertPWM2Speed(int pwm, int threshold);
+
+    void controlHBridge(Moving way, Speed speed);
+    void controlHBridge(Moving way);
 
     double computePID(double input);    
 private:
-    JoyStick joyStick;
-    HBridge hBridge;
-    JStickData jsData;
+    JoyStick m_joyStick;
+    HBridge m_hBridge;
+    JStickData joyStickData;
+
     Speed speed;
     Moving way;
-    static const int thresholdPWM = 128;    
+    int thresholdPWM;    
     const int offset = 10;
     
     static const double kp = 2;

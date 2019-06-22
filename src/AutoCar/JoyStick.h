@@ -14,20 +14,17 @@
 #define _JOYSTICK_H_
 
 #include "Arduino.h"
-
-// #define VRXPIN     A0
-// #define VRYPIN     A1
-// #define SWPIN      A2
+#include "Utils.h"
 
 typedef struct 
 {
     /* data */
     int axisX;
     int axisY;
-    bool sw;
+    int sw;
 }JStickData;
 
-struct JoyStickConfig
+struct JoyStickPinConfig
 {
     unsigned int VRxPin;
     unsigned int VRyPin;
@@ -37,10 +34,15 @@ struct JoyStickConfig
 class JoyStick
 {
 public:
-    void init(const JoyStickConfig& config);
-    void read(JStickData* data);
+    JoyStick(const JoyStickPinConfig& config);
+    RetVal init();
+    RetVal read(JStickData* data);
+    JoyStickPinConfig getConfig() const
+    {
+        return m_config;
+    }
 private:
-    JoyStickConfig& m_config;    
+    JoyStickPinConfig m_config;    
 };
 
 #endif

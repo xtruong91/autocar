@@ -11,13 +11,34 @@
  */
 
 #include "Controller.h"
+#include "Debug.h"
 
-void Controller::Init()
+Controller::Controller(const ControllerConfig& config)
+    : m_hBridge(config.hBridgeCfg),
+     m_joyStick(config.joyStickCfg),
+     thresholdPWM(0)
 {
-    // joyStick.Init();
-    // hBridge.Init();
+
 }
-Speed Controller::DetectSpeed(int pwm, int threshold)
+
+void 
+Controller::init()
+{
+    m_joyStick.init();
+#ifdef DEBUG
+        Debug::instance()->printf("PinVx:%d, PinVRy:%d, PinSW:%d\n", 
+                            m_joyStick.getConfig().VRxPin,m_joyStick.getConfig().VRyPin,
+                            m_joyStick.getConfig().SWPin);
+#endif
+    // wait for calib;
+    m_joyStick.read(&joyStickData);
+    thresholdPWM = (joyStickData.axisX + joyStickData.axisY) /2; 
+
+    m_hBridge.init();
+}
+
+Speed 
+Controller::convertPWM2Speed(int pwm, int threshold)
 {
     Speed result;
     if(pwm < threshold)
@@ -48,7 +69,8 @@ Speed Controller::DetectSpeed(int pwm, int threshold)
     return result;       
 }
 
-Moving Controller::DetectNavigation(int pwmx, int pwmy, int threshold)
+Moving 
+Controller::determineDirect(int pwmx, int pwmy, int threshold)
 {
     Moving direction;
     if(pwmx < (threshold - offset))
@@ -70,41 +92,45 @@ Moving Controller::DetectNavigation(int pwmx, int pwmy, int threshold)
     return direction;    
 }
 
-void Controller::ControlHBridge(Moving way)
+void 
+Controller::controlHBridge(Moving way)
 {
     switch (way)
     {
     case Up:
-        hBridge.moveUp();
+        m_hBridge.moveUp();
         break;
     case Down:
-        hBridge.moveDown();
+        m_hBridge.moveDown();
         break;        
     case Left:
-        hBridge.moveLeft();
+        m_hBridge.moveLeft();
         break;
     case Right:
-        hBridge.moveLeft();
+        m_hBridge.moveRight();
         break;            
     default:
+        m_hBridge.stop();
         break;
     }
 }
-void Controller::ControlHBridge(Moving way, Speed speed)
+
+void 
+Controller::controlHBridge(Moving way, Speed speed)
 {
     switch (way)
     {
     case Up:
-        hBridge.moveUp(speed);
+        m_hBridge.moveUp(speed);
         break;
     case Down:
-        hBridge.moveDown(speed);
+        m_hBridge.moveDown(speed);
         break;        
     case Left:
-        hBridge.moveLeft(speed);
+        m_hBridge.moveLeft(speed);
         break;
     case Right:
-        hBridge.moveLeft(speed);
+        m_hBridge.moveLeft(speed);
         break;            
     default:
         break;
@@ -112,15 +138,23 @@ void Controller::ControlHBridge(Moving way, Speed speed)
 }
 
 
-void Controller::Run()
+void 
+Controller::run()
 {
     // Read joystick
-    joyStick.read(&jsData);
-    // calculate Navigation and speed ;
-    way = DetectNavigation(jsData.axisX, jsData.axisY, thresholdPWM);
-    speed = DetectSpeed(jsData.axisX, thresholdPWM);
+    m_joyStick.read(&joyStickData);
+    
+    //Debug::instance()->printf("Result: %d \n", );
+    // calibration threshold = average(x, y);
+    // Press Sw to calibrate
+    way = determineDirect(joyStickData.axisX, joyStickData.axisY, thresholdPWM);    
+    //speed = convertPWM2Speed(jsData.axisX, thresholdPWM);
+#ifdef DEBUG
+    Debug::instance()->printf("VRx:%d, VRy:%d, SW:%d, Way:%d \n", 
+                            joyStickData.axisX, joyStickData.axisY, joyStickData.sw ,way);
+#endif    
     // controll;
-    ControlHBridge(way);    
+    controlHBridge(way);    
 }
 
 double Controller::computePID(double input)

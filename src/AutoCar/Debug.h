@@ -18,8 +18,15 @@
 class Debug 
 {
 public:
+    static Debug *instance();
+
     void init();
-    int printf(const char* format, ...);  
+    
+    int printf(const char* format, ...);
+
+private:
+    static Debug *m_instance;
+    Debug(){};      
 };
 
 #endif

@@ -12,30 +12,27 @@
 
 #include "JoyStick.h"
 
-void 
-JoyStick::init(const JoyStickConfig &config)
+JoyStick::JoyStick(const JoyStickPinConfig& config)
+    : m_config(config)
 {
-    m_config = config;
+
+}
+
+RetVal 
+JoyStick::init()
+{
     pinMode (m_config.VRxPin, INPUT) ;
     pinMode (m_config.VRyPin, INPUT) ;
     pinMode (m_config.SWPin, INPUT) ;
 }
 
-void 
+RetVal 
 JoyStick::read(JStickData* data)
 {
-    if(data != NULL)
-        return;
+    if(data == NULL)
+        return RET_FAIL;
     data->axisX = analogRead (m_config.VRxPin) ; //
-    data->axisY = analogRead (m_config.VRxPin) ;
-    if(analogRead(m_config.SWPin) >= 1023)
-    {
-         data->sw = true;
-    }
-    else
-    {
-        data->sw = false;
-    }
-    
-       
+    data->axisY = analogRead (m_config.VRyPin) ;
+    data->sw = analogRead(m_config.SWPin);
+    return RET_SUCCESS;       
 }

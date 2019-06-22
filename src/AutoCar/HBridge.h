@@ -11,12 +11,7 @@
  */
 
 #ifndef _HBRIDGE_H_
-#define _HBRIDGE_H
-
-// #define WHEELLEFTPIN1   5
-// #define WHEELLEFTPIN2   6
-// #define WHEELRIGHTPIN1  10
-// #define WHEELRIGHTPIN2  11
+#define _HBRIDGE_H_
 
 typedef enum
 {
@@ -29,7 +24,7 @@ typedef enum
  * HBridge circuit which contain L298 IC,
  * have four output pin
 */
-struct HBridgeConfig
+struct HBridgePinConfig
 {
     unsigned int Pin1;
     unsigned int Pin2;
@@ -40,7 +35,8 @@ struct HBridgeConfig
 class HBridge
 {
 public:
-    void init(const HBridgeConfig& config);
+    HBridge(const HBridgePinConfig& config);
+    void init();
     // spin clockwise
     void moveUp();
     // turn clockwise along with specific level
@@ -57,7 +53,7 @@ public:
 
     void stop();
 private:
-    HBridgeConfig &m_config;
+    HBridgePinConfig m_config;
     static int speed2PWM(Speed speed); 
     static const int threshold;
 };

@@ -1,31 +1,22 @@
-
-#include "UART.h"
-#include "MessageHandler.h"
+#include "Debug.h"
 
 //Controller control;
+#include "ControllerConfig.h"
+#include "Controller.h"
+#include "Debug.h"
 
-UART* uart;
-MessageHandler msgHandler;
-UartConfig cfg = {9600, 100};
+
+ControllerConfig *cfg = ControllerConfig::instance();
+Controller centerController(*cfg);
+Debug *debug = Debug::instance();
 
 //Debug debug;
 void setup() {
-  // put your setup code here, to run once:
-  //control.Init();
-  uart = UART::instance();
-  uart -> init(cfg);
-
-  uart->registerRxObs(&msgHandler);
-  //uart->nit();
-  //esp = new ESP8266(uart);  
-  //uart->RegisterOb(esp);
-  //debug.Init();
+  debug->init(); 
+  centerController.init();
 }
 
 void loop() {
-  //control.Run();
-  //debug.printf("detect: %d", 10);
+  centerController.run();
   //delay(1000);
-  // put your main code here, to run repeatedly:
-
 }

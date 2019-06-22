@@ -14,10 +14,15 @@
 
 const int HBridge::threshold = 128;
 
-void 
-HBridge::init(const HBridgeConfig &config)
+HBridge::HBridge(const HBridgePinConfig &config)
+    : m_config(config)
 {
-    m_config = config;
+
+}
+
+void 
+HBridge::init()
+{
     pinMode(m_config.Pin1, OUTPUT);
     pinMode(m_config.Pin2, OUTPUT);
 
@@ -31,8 +36,8 @@ HBridge::moveUp()
     digitalWrite(m_config.Pin1, LOW);
     digitalWrite(m_config.Pin2, HIGH);
 
-    digitalWrite(m_config.Pin3, LOW);
-    digitalWrite(m_config.Pin4, HIGH);
+    digitalWrite(m_config.Pin3, HIGH);
+    digitalWrite(m_config.Pin4, LOW);
 }
 
 void 
@@ -42,8 +47,8 @@ HBridge::moveUp(Speed speed)
     analogWrite(m_config.Pin1, 0);
     analogWrite(m_config.Pin2, pwm);
 
-    analogWrite(m_config.Pin3, 0);
-    analogWrite(m_config.Pin4, pwm);
+    analogWrite(m_config.Pin3, pwm);
+    analogWrite(m_config.Pin4, 0);
 }
 
 void 
@@ -52,8 +57,8 @@ HBridge::moveDown()
     digitalWrite(m_config.Pin1, HIGH);
     digitalWrite(m_config.Pin2, LOW);
 
-    digitalWrite(m_config.Pin3, HIGH);
-    digitalWrite(m_config.Pin4, LOW);
+    digitalWrite(m_config.Pin3, LOW);
+    digitalWrite(m_config.Pin4, HIGH);
 }
 
 void 
@@ -63,18 +68,18 @@ HBridge::moveDown(Speed speed)
     analogWrite(m_config.Pin1, pwm);
     analogWrite(m_config.Pin2, 0);
 
-    analogWrite(m_config.Pin3, pwm);
-    analogWrite(m_config.Pin4, 0);
+    analogWrite(m_config.Pin3, 0);
+    analogWrite(m_config.Pin4, pwm);
 }
 
 void 
 HBridge::moveLeft()
 {
     digitalWrite(m_config.Pin1, LOW);
-    digitalWrite(m_config.Pin2, LOW);
+    digitalWrite(m_config.Pin2, HIGH);
 
     digitalWrite(m_config.Pin3, LOW);
-    digitalWrite(m_config.Pin4, HIGH);
+    digitalWrite(m_config.Pin4, LOW);
 }
 
 void 
@@ -91,8 +96,10 @@ HBridge::moveLeft(Speed speed)
 void 
 HBridge::moveRight()
 {
+    //detect left/right wheels.
     digitalWrite(m_config.Pin1, LOW);
     digitalWrite(m_config.Pin2, LOW);
+
     digitalWrite(m_config.Pin3, LOW);
     digitalWrite(m_config.Pin4, HIGH);
 }
