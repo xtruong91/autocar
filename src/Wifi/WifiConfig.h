@@ -15,11 +15,15 @@
 #include "MQTTClient.h"
 #include "UART.h"
 
+static const char* ssid          = "IoT";
+static const char* password      = "123456a@";
+static const char* MQTTServer    = "broker.mqtt-dashboard.com";
+
+
 class WifiConfig
 {
 public:
     static WifiConfig *instance();
-
     MQTTClientConfig mqtttClientConfig;
     UARTConfig uartConfig;
 

@@ -182,5 +182,3 @@ RingBuffer::getDataSize()
 {
     return psRingBuffer->maxlen - getAvailableSpace();
 }
-
-

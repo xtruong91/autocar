@@ -11,6 +11,7 @@
  */
 #include "WifiConfig.h"
 
+
 WifiConfig* WifiConfig::m_instance = NULL;
 
 
@@ -27,12 +28,11 @@ WifiConfig::instance()
 
 WifiConfig::WifiConfig()
 {
-    mqtttClientConfig.ssid          = "...";
-    mqtttClientConfig.password      = "...";
-    mqtttClientConfig.MQTTServer    = "broker.mqtt-dashboard.com";
+    mqtttClientConfig.ssid          = ssid;
+    mqtttClientConfig.password      = password;
+    mqtttClientConfig.MQTTServer    = MQTTServer;
     mqtttClientConfig.MQTTPort      = 1883;
 
     uartConfig.uartPort             = 0;
     uartConfig.baudrate             = 115200;
 }
-

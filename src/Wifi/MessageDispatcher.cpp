@@ -24,9 +24,14 @@ MessageDispatcher::MessageDispatcher()
 RetVal 
 MessageDispatcher::init()
 {
-    m_pMQTTClient->init(m_pWifiConfig->mqtttClientConfig);
+    // initialize for UART and establish observer.
     m_pUART->init(m_pWifiConfig->uartConfig);
     m_pUART->setObserver(this);
+
+    m_pMQTTClient->init(m_pWifiConfig->mqtttClientConfig);
+   
+
+
 }
 
 RetVal 
@@ -34,7 +39,10 @@ MessageDispatcher::run()
 {
     m_pUART->run();
     
-    return m_pMQTTClient->run();   
+    RetVal ret =  m_pMQTTClient->run();
+    m_pMQTTClient->addSubscribe("xuantruong/test");
+
+    return ret;    
 }
 
 void

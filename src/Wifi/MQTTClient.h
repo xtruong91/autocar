@@ -37,6 +37,8 @@ public:
     RetVal run();
     RetVal stop();
 
+    int publishData(const char* topic, const char* data);
+
     void addSubscribe(const char* topic);
     void removeSubscribe(const char* topic);
 

@@ -72,8 +72,3 @@ Message::setPayload(Payload *pl)
     payload = pl;
 }
 
-void
-Message::setBytePayload(const char *pl)
-{
-
-}
