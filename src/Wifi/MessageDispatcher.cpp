@@ -16,7 +16,7 @@ MessageDispatcher::MessageDispatcher()
     m_pWifiConfig(NULL),
     m_pUART(NULL)
 {    
-    //m_pMQTTClient = MQTTClient::instance();
+    m_pMQTTClient = MQTTClient::instance();
     m_pWifiConfig = WifiConfig::instance();
     m_pUART = new UART();
 }
@@ -24,25 +24,24 @@ MessageDispatcher::MessageDispatcher()
 RetVal 
 MessageDispatcher::init()
 {
-    //m_pMQTTClient->init(m_pWifiConfig->getMQTTClientConfig());
-    UARTConfig cfg = {0, 115200};
-    m_pUART->init(cfg);
-    //m_pUART->init(m_pWifiConfig->getUARTConfig());
-    //m_pUART->setObserver(this);
+    m_pMQTTClient->init(m_pWifiConfig->mqtttClientConfig);
+    m_pUART->init(m_pWifiConfig->uartConfig);
+    m_pUART->setObserver(this);
 }
 
 RetVal 
 MessageDispatcher::run()
 {
     m_pUART->run();
-    //return m_pMQTTClient->run();   
+    
+    return m_pMQTTClient->run();   
 }
 
 void
 MessageDispatcher::update(RingBuffer& buffer)
 {
     char data;
-    while(buffer.pop(&data) > 0)
+    while(buffer.pop(&data) >= 0)
     {
         Serial.print(data);
     }

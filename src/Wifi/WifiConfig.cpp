@@ -13,34 +13,26 @@
 
 WifiConfig* WifiConfig::m_instance = NULL;
 
+
 WifiConfig*
 WifiConfig::instance()
 {
     if(m_instance == NULL)
+    {
         m_instance = new WifiConfig();
+    }
     return m_instance;
 }
 
 
 WifiConfig::WifiConfig()
 {
-    mqtttClientConfig.ssid = ssid;
-    mqtttClientConfig.password = password;
-    mqtttClientConfig.MQTTServer = mqtt_server;
-    mqtttClientConfig.MQTTPort = mqtt_port;
+    mqtttClientConfig.ssid          = "...";
+    mqtttClientConfig.password      = "...";
+    mqtttClientConfig.MQTTServer    = "broker.mqtt-dashboard.com";
+    mqtttClientConfig.MQTTPort      = 1883;
 
-    uartConfig.uartPort = uartPort;
-    uartConfig.baudrate = baudrate;
+    uartConfig.uartPort             = 0;
+    uartConfig.baudrate             = 115200;
 }
 
-MQTTClientConfig 
-WifiConfig::getMQTTClientConfig() const
-{
-    return mqtttClientConfig;
-}
-
-UARTConfig       
-WifiConfig::getUARTConfig() const
-{
-   return uartConfig;
-}

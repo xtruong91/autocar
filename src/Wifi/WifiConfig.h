@@ -15,24 +15,16 @@
 #include "MQTTClient.h"
 #include "UART.h"
 
-static const char* ssid = "....";
-static const char* password = "...";
-static const char* mqtt_server = "broker.mqtt-dashboard.com";
-static const unsigned mqtt_port = 1833;
-static const unsigned char uartPort = 0;
-static const unsigned char baudrate = 115200;
-
 class WifiConfig
 {
 public:
     static WifiConfig *instance();
-    
-    MQTTClientConfig getMQTTClientConfig() const;
-    UARTConfig       getUARTConfig() const;
-private:
+
     MQTTClientConfig mqtttClientConfig;
     UARTConfig uartConfig;
-    explicit WifiConfig();
+
+private:
+    WifiConfig();    
     static WifiConfig *m_instance;
 };
 

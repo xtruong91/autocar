@@ -47,7 +47,6 @@ RetVal
 MQTTClient::init(const MQTTClientConfig& config)
 {
     WiFi.begin(config.ssid.c_str());
-    while (WiFi.status() != WL_CONNECTED);
 
     m_pMqttClient->setServer(config.MQTTServer.c_str(), config.MQTTPort);
     m_pMqttClient->setCallback(onRcvCallback);
@@ -66,6 +65,11 @@ MQTTClient::onRcvCallback(char *topic, byte* payload, unsigned int length)
 RetVal 
 MQTTClient::run()
 {
+    if(WiFi.status() != WL_CONNECTED)
+    {
+        Serial.println("The wifi network connect not yet");
+        return RET_FAIL;
+    }
     if(!m_pMqttClient->loop())
     {
         reconnect();
@@ -74,8 +78,7 @@ MQTTClient::run()
     else
     {
         return RET_SUCCESS;
-    }
-    
+    }    
 }
 
 RetVal 
@@ -123,7 +126,7 @@ MQTTClient::notify()
 bool
 MQTTClient::reconnect()
 {
-    while(!m_pMqttClient->connected())
+    if(!m_pMqttClient->connected())
     {
         // Create a random client ID
         String clientId = "MQTTCient-";
