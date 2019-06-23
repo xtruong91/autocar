@@ -1,6 +1,6 @@
 /*
  * File: Message.h
- * File Created: Wednesday, 19th June 2019
+ * File Created: Sunday, 23rd June 2019
  * Author: truongtx (truongtx91@gmail.com)
  * -----
  * Description: 
@@ -13,7 +13,6 @@
 #define _MESSAGE_H_
 
 #include "Utils.h"
-#include "Payload.h"
 
 class Payload;
 
@@ -25,7 +24,7 @@ public:
     Message(MsgId_t id, MsgCode_t code, Payload *pl);
     virtual ~Message();
 
-    MsgId_t getId() const;
+        MsgId_t getId() const;
     void setId(MsgId_t id);
 
     MsgCode_t getCode() const;
@@ -39,12 +38,19 @@ public:
      */
     void setPayload(Payload *pl);
 
+    void setBytePayload(const char *pl){}
+
+
 private:
     MsgId_t id;
     MsgCode_t code;
     Payload *payload;
-    unsigned short payloadSize;        
 };
 
+class Payload
+{
+public:
+    virtual ~Payload() {}
+};
 
 #endif

@@ -71,3 +71,9 @@ Message::setPayload(Payload *pl)
     if (payload != NULL) delete payload;
     payload = pl;
 }
+
+void
+Message::setBytePayload(const char *pl)
+{
+
+}
