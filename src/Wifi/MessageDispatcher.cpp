@@ -11,6 +11,10 @@
  */
 #include "MessageDispatcher.h"
 
+#define DEBUG
+
+WebService *webService = NULL;
+
 MessageDispatcher::MessageDispatcher()
     :m_pMQTTClient(NULL),
     m_pWifiConfig(NULL),
@@ -30,8 +34,9 @@ MessageDispatcher::init()
 
     m_pMQTTClient->init(m_pWifiConfig->mqtttClientConfig);
    
-
-
+    // run webservice;
+    webService = WebService::instance(m_pWifiConfig->webServiceConfig);
+    webService->init();
 }
 
 RetVal 
@@ -41,7 +46,8 @@ MessageDispatcher::run()
     
     RetVal ret =  m_pMQTTClient->run();
     m_pMQTTClient->addSubscribe("xuantruong/test");
-
+    
+    webService->run();
     return ret;    
 }
 

@@ -1,16 +1,16 @@
 /*
- * File: WebGateway.h
+ * File: WebService.h
  * File Created: Sunday, 23rd June 2019
  * Author: truongtx (truongtx91@gmail.com)
  * -----
- * Description: 
+ * Description: include all service which support for web
  * Version: 0.1
  * Tool: CMake
  * -----
  * Copyright TruongTX
  */
-#ifndef _WEB_GATEWAY_H_
-#define _WEB_GATEWAY_H_
+#ifndef _WEB_SERVICE_H_
+#define _WEB_SERVICE_H_
 
 #include "Utils.h"
 #include "Arduino.h"
@@ -23,7 +23,7 @@
 #include <FS.h>
 #include <WebSocketsServer.h>
 
-struct WebGatewayConfig
+struct WebServiceConfig
 {
     String ssid;
     String password;
@@ -37,21 +37,21 @@ struct WebGatewayConfig
     String mdnsName; // Domain name for the mDNS responder
 
     unsigned int WebServerPort;
-    unsigned int WebSocketPort;
+    unsigned int WebClientPort;
 };
 
-class WebGateway
+class WebService
 {
 public:
-    static WebGateway *instance(const WebGatewayConfig& config);
+    static WebService *instance(const WebServiceConfig& config);
     RetVal init();
     RetVal run();
 
 private:
-    WebGateway(const WebGatewayConfig& config);
-    static WebGateway *m_instance;
+    WebService(const WebServiceConfig& config);
+    static WebService *m_instance;
 
-    WebGatewayConfig m_config;
+    WebServiceConfig m_config;
 
     ESP8266WiFiMulti m_wifiMulti;
 
@@ -127,6 +127,6 @@ private:
 };
 
 // !!! Important. have to declare here. 
-WebGateway *webGateway;
+extern WebService *webService;
 
 #endif

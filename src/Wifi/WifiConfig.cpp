@@ -31,8 +31,21 @@ WifiConfig::WifiConfig()
     mqtttClientConfig.ssid          = ssid;
     mqtttClientConfig.password      = password;
     mqtttClientConfig.MQTTServer    = MQTTServer;
-    mqtttClientConfig.MQTTPort      = 1883;
+    mqtttClientConfig.MQTTPort      = MQTTPort;
 
-    uartConfig.uartPort             = 0;
-    uartConfig.baudrate             = 115200;
+    uartConfig.uartPort             = uartPort;
+    uartConfig.baudrate             = uartBaudRate;
+
+    webServiceConfig.ssid       = ssid;
+    webServiceConfig.password   = password;
+
+    webServiceConfig.ssidAP     = ssidAP;
+    webServiceConfig.passwordAP = passwordAP;
+
+    webServiceConfig.OTAName    = OTAName;
+    webServiceConfig.OTAPassword = OTAPassword;
+
+    webServiceConfig.mdnsName       = mdnsName;
+    webServiceConfig.WebServerPort  = WebServerPort;
+    webServiceConfig.WebClientPort  = WebClientPort;
 }

@@ -17,7 +17,7 @@
 
 struct UARTConfig
 {
-    unsigned char uartPort;
+    unsigned int uartPort;
     unsigned int baudrate;
 };
 

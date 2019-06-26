@@ -1,5 +1,5 @@
 /*
- * File: WebGateway.cpp
+ * File: WebService.cpp
  * File Created: Monday, 24th June 2019
  * Author: truongtx (truongtx91@gmail.com)
  * -----
@@ -9,24 +9,26 @@
  * -----
  * Copyright TruongTX
  */
-#include "WebGateway.h"
+#include "WebService.h"
 
-WebGateway *WebGateway::m_instance = NULL;
+#define DEBUG
 
-WebGateway*
-WebGateway::instance(const WebGatewayConfig& config)
+WebService *WebService::m_instance = NULL;
+
+WebService*
+WebService::instance(const WebServiceConfig& config)
 {
     if(m_instance == NULL)
     {
-        m_instance = new WebGateway(config);
+        m_instance = new WebService(config);
     }
-    return webGateway;
+    return m_instance;
 }
 
 
-WebGateway::WebGateway(const WebGatewayConfig& config)
+WebService::WebService(const WebServiceConfig& config)
    : m_config(config),
-    m_webSocket(m_config.WebSocketPort),
+    m_webSocket(m_config.WebClientPort),
     m_server(m_config.WebServerPort)
 {
     
@@ -34,10 +36,10 @@ WebGateway::WebGateway(const WebGatewayConfig& config)
 }
 
 RetVal 
-WebGateway::init()
+WebService::init()
 {
     // Start a Wi-Fi access point, and try to connect to some given access points. Then wait for either an AP or STA connection
-    startWifi();
+    startWifi();    
 
     // Start the OTA service
     startOTA();
@@ -49,15 +51,18 @@ WebGateway::init()
     startWebSocket();
 
     // Start the mDNS responder
-    startServer();
+    startMDNS();
 
      // Start a HTTP server with a file read handler and an upload handler
     startServer(); 
 }
 
 RetVal 
-WebGateway::run()
+WebService::run()
 {
+    // start loop  for MDNS
+    MDNS.update();
+
     // constantly check for websocket events
     m_webSocket.loop();
 
@@ -67,7 +72,6 @@ WebGateway::run()
     // listen for OTA events
     ArduinoOTA.handle();
 
-
 }
 
 
@@ -76,24 +80,28 @@ WebGateway::run()
  * Then wait for either an AP or STA connection;
 */
 void 
-WebGateway::startWifi()
+WebService::startWifi()
 {
     WiFi.softAP(m_config.ssid, m_config.password);
 
+#ifdef DEBUG
+    Serial.println(m_config.ssid);
+    Serial.println( m_config.password);
+#endif
     m_wifiMulti.addAP(m_config.ssidAP.c_str(), m_config.passwordAP.c_str());
-
+    m_wifiMulti.addAP("Pa Ka", "123456a@");
     while (m_wifiMulti.run() != WL_CONNECTED && 
                 WiFi.softAPgetStationNum() < 1) 
     {  // Wait for the Wi-Fi to connect
         delay(250);
-        //Serial.print('.');
+        Serial.print('.');
     }
 }
 /**
  * Start the OTA service
 */
 void 
-WebGateway::startOTA()
+WebService::startOTA()
 {
     ArduinoOTA.setHostname(m_config.OTAName.c_str());
     ArduinoOTA.setPassword(m_config.OTAPassword.c_str());
@@ -132,7 +140,7 @@ WebGateway::startOTA()
  * Start the SPIFFS and list all contents
 */
 void 
-WebGateway::startSPIFFS()
+WebService::startSPIFFS()
 {
     SPIFFS.begin(); // Start the SPI Flash File System (SPIFFS)
     Serial.println("SPIFFS started. Contents:");
@@ -151,7 +159,7 @@ WebGateway::startSPIFFS()
  * Start a websocket server
 */
 void 
-WebGateway::startWebSocket()
+WebService::startWebSocket()
 {
     m_webSocket.begin();  // start the websocket server
     m_webSocket.onEvent(onWebSocketEvent);          // if there's an incomming websocket message, go to function 'webSocketEvent'
@@ -161,19 +169,22 @@ WebGateway::startWebSocket()
  * Start the mDNS responder;
 */
 void 
-WebGateway::startMDNS()
+WebService::startMDNS()
 {
     MDNS.begin(m_config.mdnsName);                        // start the multicast domain name server
     Serial.print("mDNS responder started: http://");
     Serial.print(m_config.mdnsName);
     Serial.println(".local");
+    
+    // Add service to MDNS-SD
+    MDNS.addService("http", "tcp", 80);
 }
 
 /**
  * Start a HTTP Server with a file read handler and upload handler
 */
 void 
-WebGateway::startServer()
+WebService::startServer()
 {
     m_server.on("/edit.html",  HTTP_POST, onSendOK, onHandleFileUpload);                       // go to 'handleFileUpload'
 
@@ -184,22 +195,22 @@ WebGateway::startServer()
 }
 
 void 
-WebGateway::onSendOK()
+WebService::onSendOK()
 {
-   webGateway->m_server.send(200, "text/plain", ""); 
+   webService->m_server.send(200, "text/plain", ""); 
 }
 
 void 
-WebGateway::onHandleNotFound()
+WebService::onHandleNotFound()
 {
-    if(!onHandleFileRead(webGateway->m_server.uri()))
+    if(!onHandleFileRead(webService->m_server.uri()))
     {          // check if the file exists in the flash memory (SPIFFS), if so, send it
-        webGateway->m_server.send(404, "text/plain", "404: File Not Found");
+        webService->m_server.send(404, "text/plain", "404: File Not Found");
     }
 }
 
 bool 
-WebGateway::onHandleFileRead(String path)
+WebService::onHandleFileRead(String path)
 {
     Serial.println("handleFileRead: " + path);
     if (path.endsWith("/")) path += "index.html";          // If a folder is requested, send the index file
@@ -214,7 +225,7 @@ WebGateway::onHandleFileRead(String path)
             path += ".gz";                                         // Use the compressed verion
         
         File file = SPIFFS.open(path, "r");                    // Open the file
-        size_t sent = webGateway->m_server.streamFile(file, contentType);    // Send it to the client
+        size_t sent = webService->m_server.streamFile(file, contentType);    // Send it to the client
         
         file.close();                                          // Close the file again
         
@@ -229,9 +240,9 @@ WebGateway::onHandleFileRead(String path)
 }
 
 void 
-WebGateway::onHandleFileUpload()
+WebService::onHandleFileUpload()
 {
-    HTTPUpload& upload = webGateway->m_server.upload();
+    HTTPUpload& upload = webService->m_server.upload();
     String path;
 
     if(upload.status == UPLOAD_FILE_START)
@@ -250,33 +261,33 @@ WebGateway::onHandleFileUpload()
 
         Serial.print("handleFileUpload Name: "); Serial.println(path);
     
-        webGateway->fsUploadFile = SPIFFS.open(path, "w");            // Open the file for writing in SPIFFS (create if it doesn't exist)
+        webService->fsUploadFile = SPIFFS.open(path, "w");            // Open the file for writing in SPIFFS (create if it doesn't exist)
         
         path = String();
     } 
     else if(upload.status == UPLOAD_FILE_WRITE)
     {
-        if(webGateway->fsUploadFile)
-            webGateway->fsUploadFile.write(upload.buf, upload.currentSize); // Write the received bytes to the file
+        if(webService->fsUploadFile)
+            webService->fsUploadFile.write(upload.buf, upload.currentSize); // Write the received bytes to the file
     } 
     else if(upload.status == UPLOAD_FILE_END)
     {
-        if(webGateway->fsUploadFile) 
+        if(webService->fsUploadFile) 
         {                                    // If the file was successfully created
-            webGateway->fsUploadFile.close();                               // Close the file again
+            webService->fsUploadFile.close();                               // Close the file again
             Serial.print("handleFileUpload Size: "); 
             Serial.println(upload.totalSize);
-            webGateway->m_server.sendHeader("Location","/success.html");      // Redirect the client to the success page
-            webGateway->m_server.send(303);
+            webService->m_server.sendHeader("Location","/success.html");      // Redirect the client to the success page
+            webService->m_server.send(303);
         } else 
         {
-            webGateway->m_server.send(500, "text/plain", "500: couldn't create file");
+            webService->m_server.send(500, "text/plain", "500: couldn't create file");
         }
     }
 }
 
 void 
-WebGateway::onWebSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght)
+WebService::onWebSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght)
 {
     switch (type) 
     {
@@ -285,7 +296,7 @@ WebGateway::onWebSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size
         break;
     case WStype_CONNECTED: 
     {              // if a new websocket connection is established
-        IPAddress ip = webGateway->m_webSocket.remoteIP(num);
+        IPAddress ip = webService->m_webSocket.remoteIP(num);
         //Serial.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
         //rainbow = false;                  // Turn rainbow off when a new connection is established
     }
@@ -315,7 +326,7 @@ WebGateway::onWebSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size
 }
 
 String 
-WebGateway::formatBytes(size_t bytes)
+WebService::formatBytes(size_t bytes)
 {
     if (bytes < 1024) 
     {
@@ -331,7 +342,7 @@ WebGateway::formatBytes(size_t bytes)
 }
 
 String 
-WebGateway::getContentType(String filename)
+WebService::getContentType(String filename)
 {
     if (filename.endsWith(".html")) return "text/html";
     else if (filename.endsWith(".css")) return "text/css";
@@ -342,7 +353,7 @@ WebGateway::getContentType(String filename)
 }
 
 void 
-WebGateway::setHue(int hue)
+WebService::setHue(int hue)
 {
     hue %= 360;                   // hue is an angle between 0 and 359°
     float radH = hue*3.142/180;   // Convert degrees to radians

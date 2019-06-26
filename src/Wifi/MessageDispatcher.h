@@ -15,6 +15,7 @@
 #include "IRxByteObserver.h"
 #include "MQTTClient.h"
 #include "WifiConfig.h"
+#include "WebService.h"
 
 class MessageDispatcher : public IRxByteObserver
 {
